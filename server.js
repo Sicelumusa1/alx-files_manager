@@ -1,11 +1,11 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const path = require('path');
+// const dotenv = require('dotenv');
+// const path = require('path');
 
 
 const app = express();
 // env vailables middleware
-dotenv.config({path : './config.env'});
+// dotenv.config({path : './config.env'});
 
 // Middleware to parse JSON requests
 app.use(express.json());
