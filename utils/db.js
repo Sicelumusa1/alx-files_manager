@@ -29,10 +29,7 @@ class DBClient {
       return true;
     } catch (error) {
       return false;
-    } finally {
-      // Close the connection
-      await this.client.close();
-    }
+    } 
   }
 
   async nbUsers() {
@@ -44,23 +41,19 @@ class DBClient {
       return count;
     } catch (error) {
       return 0;
-    } finally {
-      await this.client.close();
-    }
+    } 
   }
 
   async nbFiles() {
     try {
       await this.client.connect();
       const db = this.client.db();
-      const filesCollection = db.collection('users');
+      const filesCollection = db.collection('files');
       const count = await filesCollection.countDocuments();
       return count;
     } catch (error) {
       return 0;
-    } finally {
-      await this.client.close();
-    }
+    } 
   }
 }
 
