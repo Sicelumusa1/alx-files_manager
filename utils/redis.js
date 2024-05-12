@@ -30,7 +30,7 @@ class RedisClient {
           resolve(value);
         }
       });
-    })
+    });
   }
 
   async set(key, value, durationInSeconds) {
