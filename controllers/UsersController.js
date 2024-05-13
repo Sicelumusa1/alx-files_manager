@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
-const User = require('../utils/Users');
+const redisClient = require('../utils/redis');
+const dbClient = require('../utils/db');
 
 const UsersController = {
   postNew: async (req, res) => {
@@ -15,7 +16,7 @@ const UsersController = {
       }
 
       // Check if email already exists
-      const existingUser = await User.findOne({ email });
+      const existingUser = await dbClient.client.db().collection('users').findOne({ email });
       if (existingUser) {
         return res.status(400).json({ error: 'Already exist' })
       }
@@ -30,7 +31,7 @@ const UsersController = {
       });
 
       // save the user to the database
-      await newUser.save();
+      await dbClient.client.db().collection('users').insertOne (newUser);
 
       // Return the new user, only email and id
       res.status(201).json({
@@ -40,6 +41,36 @@ const UsersController = {
 
     } catch (error) {
       console.error('Error creating user', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  },
+
+  getMe: async (req, res) => {
+    try {
+      const token = req.headers['x-token'];
+
+      if (!token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const key = 'auth_${token}';
+      const userId = await redisClient.get(key);
+
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized'});
+      }
+
+      const user = await dbClient.client.db().collection('users').findOne({ _id: userId });
+      if (!user) {
+        return res.status(401).json({ error: 'Unauthorized'});
+      }
+
+      return res.status(200).json({
+        email: user.email,
+        id: user._id,
+      });
+    } catch (error) {
+      console.error('Error retrieving user', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   },
