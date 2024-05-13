@@ -10,12 +10,23 @@ class DBClient {
     this.client = new MongoClient(`mongodb://${host}:${port}`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-    })
+    });
+
+    this.connect();
 
     // Handle error
     this.client.on('error', (err) => {
       console.error('MongoDB error:', err);
-    })
+    });
+  }
+
+  async connect() {
+    try {
+      await this.client.connect();
+      console.log('Connected to MongoDB');
+    } catch (error) {
+      console.log('Failed to connect to mongoDB:', error);
+    }
   }
 
   async isAlive() {
@@ -26,36 +37,32 @@ class DBClient {
     } catch (error) {
       return false;
     } finally {
-      await this.client.close();
+      // await this.client.close();
     }
   }
 
   async nbUsers() {
     try {
-      await this.client.connect();
+      await this.connect();
       const db = this.client.db();
       const usersCollection = db.collection('users');
       const count = await usersCollection.countDocuments();
       return count;
     } catch (error) {
       return 0;
-    } finally {
-      await this.client.close();
-    }
+    } 
   }
 
   async nbFiles() {
     try {
-      await this.client.connect();
+      await this.connect();
       const db = this.client.db();
       const filesCollection = db.collection('files');
       const count = await filesCollection.countDocuments();
       return count;
     } catch (error) {
       return 0;
-    } finally {
-      await this.client.close();
-    }
+    } 
   }
 }
 
