@@ -1,8 +1,4 @@
 const { MongoClient } = require('mongodb');
-const dotenv = require('dotenv');
-const path = require('path');
-
-dotenv.config({path : '../config.env'});
 
 class DBClient {
   constructor() {
@@ -29,7 +25,9 @@ class DBClient {
       return true;
     } catch (error) {
       return false;
-    } 
+    } finally {
+      await this.client.close();
+    }
   }
 
   async nbUsers() {
@@ -41,7 +39,9 @@ class DBClient {
       return count;
     } catch (error) {
       return 0;
-    } 
+    } finally {
+      await this.client.close();
+    }
   }
 
   async nbFiles() {
@@ -53,7 +53,9 @@ class DBClient {
       return count;
     } catch (error) {
       return 0;
-    } 
+    } finally {
+      await this.client.close();
+    }
   }
 }
 
