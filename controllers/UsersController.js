@@ -25,10 +25,10 @@ const UsersController = {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create a new user
-      const newUser = new User({
+      const newUser = {
         email,
         password: hashedPassword,
-      });
+      };
 
       // save the user to the database
       await dbClient.client.db().collection('users').insertOne (newUser);
@@ -53,7 +53,7 @@ const UsersController = {
         return res.status(401).json({ error: 'Unauthorized' });
       }
 
-      const key = 'auth_${token}';
+      const key = `auth_${token}`;
       const userId = await redisClient.get(key);
 
       if (!userId) {

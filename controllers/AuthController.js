@@ -24,13 +24,14 @@ const AuthController = {
 
       const token = uuidv4();
       const key = `auth_${token}`;
+      console.log('User ID:', user._id.toString());
       await redisClient.set(key, user._id.toString(), 'EX', 86400); // Store uses ID for 24 hours
       
       return res.status(200).json({ token });
 
     } catch (error) {
       console.error('Error signing in user:', error);
-      res.stats(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: 'Internal server error' });
     }
   },
 
