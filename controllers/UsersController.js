@@ -1,4 +1,4 @@
-const bcrypt = require('bycript');
+const bcrypt = require('bcrypt');
 const User = require('../utils/Users');
 
 const UsersController = {
